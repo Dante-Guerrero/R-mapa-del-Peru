@@ -136,7 +136,10 @@ sort(ubigeo)
 ubigeo
 
 for(value in ubigeo){
-  puntos <- rr_sfp[rr_UBIGEO=="value"]
+  puntos <- filter(
+    rr_sfp,
+    rr_UBIGEO== value
+  )
   
   plot(st_geometry(md[md_ubigeo==value,]), axes=T, main=value, cex.axis=0.5)
   plot(st_geometry(puntos), add = TRUE,col="red", fill="red")
@@ -154,12 +157,21 @@ for(value in ubigeo){
 ```{r}
 
 for(value in ubigeo){
-graph <- ggplot(data=md[md_ubigeo==value,])+
-  geom_sf(color="black", fill="greenyellow")+
-  ggtitle(value)
-print(graph)
-graph <- graph +
-  geom_sf(data = rr_sfp[rr_UBIGEO==value,], colour="red", fill="red")
+    
+  puntos <- filter(
+    rr_sfp,
+    rr_UBIGEO== value
+  )%>%
+    st_set_crs(4326) %>% st_transform(crs=32736)
+
+    graph <- ggplot(data=md[md_ubigeo==value,])+
+      geom_sf(color="white", fill="lightblue")+
+      ggtitle(value)
+    
+    graph <- graph+
+      geom_sf(data = puntos, color="red", fill="red", shape=2)
+
+    print(graph)
 }
 
 ```
