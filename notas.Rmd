@@ -1,0 +1,209 @@
+---
+title: "Aprendiendo a sobre objetos geoespaciales 1"
+---
+
+# Objetos geoespaciales
+
+Empecemos por importar la librería sf:
+
+```{r}
+library(sf)
+```
+
+Ahora vamos a crear nuestro primer punto:
+
+```{r}
+P <- st_point(c(2,5))
+class(P)
+
+
+P <- st_point(c(2,5,17,44), "XYZM")
+class(P)
+
+str(P)
+
+plot(P, axes = TRUE)
+
+```
+
+Ahora vamos a generar varios puntos a la vez:
+
+```{r}
+Xs <- c(2, 4, 5)
+
+Ys <- c(5, 4, 8)
+
+coords <- cbind(Xs, Ys)
+
+MP <- st_multipoint(coords)
+
+plot(MP, axes=TRUE)
+```
+Colección sfc
+
+```{r}
+P1 <- st_point(c(2,5))
+P2 <- st_point(c(4,4))
+P3 <- st_point(c(5,8))
+geometria1 <- st_sfc(P1, P2, P3)
+print(geometria1)
+
+num <-  c(1,2,3)
+nombre <- c("Pozo", "Gasolinera", "Pozo")
+tabpuntos <- data.frame(cbind(num, nombre))
+class(tabpuntos)
+print(tabpuntos)
+
+SFP <-  st_sf(tabpuntos, geometry = geometria1)
+class(SFP)
+print(SFP)
+plot(SFP, axes=TRUE)
+  
+```
+
+## Líneas
+
+```{r}
+# Línea 1
+X1s <- c(0,3,5,8,10)
+Y1s <- c(0,3,4,8,10)
+Coord1 <- cbind(X1s, Y1s)
+L1 <- st_linestring(Coord1)
+
+# Línea 2
+X2s <- c(2,1,1)
+Y2s <- c(2,4,5)
+Coord2 <- cbind(X2s,Y2s)
+L2 <- st_linestring(Coord2)
+
+# Línea 3
+X3s <- c(8,8)
+Y3s <- c(8,5)
+Coord3 <- cbind(X3s,Y3s)
+L3 <- st_linestring(Coord3)
+
+# Objeto multilínea
+L1L2 <- st_multilinestring(list(L1, L2))
+
+# Colección SFC
+geometria2 <-  st_sfc(L1, L2, L3)
+
+# Asociar tabla de atributos
+num <- c(1,2,3)
+code <- c("t","t","p")
+tipo <- c("Terraceria", "Terraceria", "Pavimentada")
+tablineas <- data.frame(cbind(num,tipo,code))
+SFL <- st_sf(tablineas, geometry=geometria2)
+plot(SFL, axes=TRUE)
+
+```
+Seleccionando atributos:
+```{r}
+plot(st_geometry(SFL[tipo=="Terraceria",]),col="red",axes=TRUE)
+plot(st_geometry(SFL[tipo=="Pavimentada",]),col="green", add=TRUE)
+```
+## Polígonos
+
+```{r}
+X1 <- c(5,10,10,6,5)
+Y1 <- c(0,0,5,5,0)
+c1 <- cbind(X1, Y1)
+
+P1 <- st_polygon(list(c1))
+plot(P1, axes=T)
+
+```
+Polígono hueco
+
+```{r}
+X2 <- c(0,2,6,0,0)
+Y2 <- c(4,4,10,10,4)
+c2 <- cbind(X2,Y2)
+
+X3 <- c(1,1,2,2,1)
+Y3 <- c(5,6,6,5,5)
+
+c3 <- cbind(X3,Y3)
+
+P2 <- st_polygon(list(c2,c3))
+plot(P2,axes=T)
+```
+
+Otro
+
+```{r}
+c3i <- c3[nrow(c3):1, ] # Invierte el orden de las coordenadas
+P4 = st_polygon(list(c3i))
+plot(P4, axes=T)
+```
+Polígono más complejo
+
+```{r}
+X5 <- c(0,5,6,10,10,6,2,0,0)
+Y5 <- c(0,0,5,5,10,10,4,4,0)
+c5 <- cbind(X5,Y5)
+P5 <- st_polygon(list(c5))
+plot(P5,axes=T)
+```
+
+Colección de polígonos
+
+```{r}
+geometria3 <- st_sfc(P1, P2, P4, P5)
+plot(geometria3, axes=T)
+```
+
+Asociando la geometri3 a una tabla de atributos:
+
+```{r}
+# Tabla de atributos
+ID <- c(1,2,3,4)
+code <- c("F","F","U","A")
+tipo <- c("Bosque","Bosque","Urbano","Agricultura")
+tabpol <- data.frame(cbind(ID,code,tipo))
+# sf object
+SFPol <- st_sf(tabpol, geometry = geometria3)
+plot(SFPol,axes=TRUE)
+```
+
+# Clase RasterLayer
+
+```{r}
+library(raster)
+m <- matrix(c(1,2,3,4,2,NA,2,2,3,3,3,1),ncol=4,nrow=3,byrow=TRUE)
+m
+r <- raster(m)
+extent(r) <- extent(c(0,4,0,3))
+class(r)
+print(r)
+plot(r)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
